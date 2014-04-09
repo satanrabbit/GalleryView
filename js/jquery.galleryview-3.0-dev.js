@@ -33,7 +33,8 @@ if (typeof Object.create !== 'function') {
 		this.width = 0;
 		this.attrs = {
 			title: img.attr('title') || img.attr('alt'),
-			description: img.data('description')
+			description: img.data('description'),
+			href: img.data('href')
 		};
 		this.href = null;
 		this.dom_obj = null;
@@ -228,16 +229,14 @@ if (typeof Object.create !== 'function') {
 			dom.gv_overlay.css({
 				width: this.opts.panel_width
 			});
-			
-			
-			
+
 			$.each(this.gvImages,function(i,img) {
 				dom.gv_panelWrap.append(dom.gv_panel.clone(true));
 			});
-			
+
 			dom.gv_panels = dom.gv_panelWrap.find('.gv_panel');
 			dom.gv_panels.remove();
-			
+
 			// filmstrip
 			dom.gv_thumbnail.css({
 				width: this.opts.frame_width,
@@ -249,8 +248,8 @@ if (typeof Object.create !== 'function') {
 				marginRight: this.opts.frame_gap,
 				marginBottom: this.opts.frame_gap
 			});
-			
-			
+
+
 			if(this.filmstripOrientation === 'horizontal') {
 				this.filmstripSize = Math.floor((gv.outerWidth(dom.gv_panelWrap) - gv.outerWidth(dom.gv_navWrap)) / (gv.outerWidth(dom.gv_frame) + this.opts.frame_gap));
 				widths.fsMax = this.filmstripSize * (gv.outerWidth(dom.gv_frame) + this.opts.frame_gap);
@@ -272,7 +271,7 @@ if (typeof Object.create !== 'function') {
 				width: widths.filmstrip,
 				height: heights.filmstrip
 			});
-			
+
 			// gallery
 			if(this.opts.show_filmstrip) {
 				if(this.filmstripOrientation === 'horizontal') {
@@ -292,21 +291,21 @@ if (typeof Object.create !== 'function') {
 					height: gv.outerHeight(dom.gv_panelWrap)
 				});	
 			}
-			
+
 			dom.gv_galleryWrap.css({
 					width: gv.outerWidth(dom.gv_gallery),
 					height: gv.outerHeight(dom.gv_gallery),
 					padding: this.opts.frame_gap
 			});
 		},
-		
+
 		setPositions: function() {
 			var self = this,
 				dom = this.dom,
 				navVert = 0, fsVert = 0,
 				navHorz = 0, fsHorz = 0,
 				vert, horz;
-			
+
 			// determine vertical or horizontal offset
 			// if negative, apply to filmstrip, otherwise apply to navbar
 			if(this.filmstripOrientation === 'horizontal') {
@@ -318,15 +317,15 @@ if (typeof Object.create !== 'function') {
 				if(horz < 0) { fsHorz = -1 * horz; }
 				else { navHorz = horz; }
 			}
-			
+
 			// for horizontal filmstrips w/o navigation, center the filmstrip under the panel
 			if(!this.opts.show_filmstrip_nav && this.filmstripOrientation === 'horizontal') {
 				fsHorz = Math.floor((gv.outerWidth(dom.gv_panelWrap) - gv.outerWidth(dom.gv_filmstripWrap)) / 2);
 			}
-			
+
 			dom.gv_panelNavNext.css({ top: (gv.outerHeight(dom.gv_panel) - gv.outerHeight(dom.gv_panelNavNext)) / 2, right: 10 });
 			dom.gv_panelNavPrev.css({ top: (gv.outerHeight(dom.gv_panel) - gv.outerHeight(dom.gv_panelNavPrev)) / 2, left: 10 });
-			
+
 			// pin elements to gallery corners according to filmstrip position
 			switch(this.opts.filmstrip_position) {
 				case 'top':
@@ -334,26 +333,26 @@ if (typeof Object.create !== 'function') {
 					dom.gv_panelWrap.css({ bottom: 0, left: 0 });
 					dom.gv_filmstripWrap.css({ top: fsVert, left: fsHorz });
 					break;
-				
+
 				case 'right':
 					dom.gv_navWrap.css({ bottom: navVert, right: navHorz });
 					dom.gv_panelWrap.css({ top: 0, left: 0 });
 					dom.gv_filmstripWrap.css({ top: fsVert, right: fsHorz });
 					break;
-				
+
 				case 'left':
 					dom.gv_navWrap.css({ bottom: navVert, left: navHorz });
 					dom.gv_panelWrap.css({ top: 0, right: 0 });
 					dom.gv_filmstripWrap.css({ top: fsVert, left: fsHorz });
 					break;
-				
+
 				default:
 					dom.gv_navWrap.css({ bottom: navVert, right: navHorz });
 					dom.gv_panelWrap.css({ top: 0, left: 0 });
 					dom.gv_filmstripWrap.css({ bottom: fsVert, left: fsHorz });
 					break;
 			}
-			
+
 			if(this.opts.overlay_position === 'top') {
 				dom.gv_overlay.css({ top: 0, left: -99999 });
 				dom.gv_showOverlay.css({ top: 0, left: 0 });
@@ -361,23 +360,23 @@ if (typeof Object.create !== 'function') {
 				dom.gv_overlay.css({ bottom: 0, left: -99999 });
 				dom.gv_showOverlay.css({ bottom: 0, left: 0 });
 			}
-			
+
 			if(!this.opts.show_filmstrip_nav) {
-				dom.gv_navWrap.remove();	
+				dom.gv_navWrap.remove();
 			}
 		},
-		
+
 		buildFilmstrip: function() {
 			var self = this,
 				dom = this.dom,
 				framesLength = this.gvImages.length * ((this.filmstripOrientation === 'horizontal' ? this.opts.frame_width : this.opts.frame_height) + this.opts.frame_gap);
-			
+
 			dom.gv_frame.append(dom.gv_thumbnail);
 			if(this.opts.show_captions) { 
 				dom.gv_frame.append(dom.gv_caption);
 			}
 			dom.gv_thumbnail.css('opacity',this.opts.frame_opacity);
-			
+
 			dom.gv_thumbnail.bind({
 				mouseover: function() {
 					if(!$(this).hasClass('current')) {
@@ -390,17 +389,17 @@ if (typeof Object.create !== 'function') {
 					}
 				}
 			});
-			
+
 			// Drop a clone of the frame element into the filmstrip for each source image
 			$.each(this.gvImages,function(i,img) {
 				dom.gv_frame.clone(true).prependTo(dom.gv_filmstrip);
 			});
-			
+
 			dom.gv_filmstrip.css({
 				width: gv.outerWidth(dom.gv_frame),
 				height: gv.outerHeight(dom.gv_frame)
 			});
-			
+
 			// If we are scrolling the filmstrip, and we can't show all frames at once,
 			// make two additional copies of each frame
 			if(this.opts.filmstrip_style === 'scroll') {
@@ -429,35 +428,35 @@ if (typeof Object.create !== 'function') {
 			}
 			dom.gv_frames = dom.gv_filmstrip.find('.gv_frame');
 			$.each(dom.gv_frames,function(i,frame) {
-				$(frame).data('frameIndex',i);						  
+				$(frame).data('frameIndex',i);
 			});
 			dom.gv_thumbnails = dom.gv_filmstrip.find('div.gv_thumbnail');
 		},
-		
+
 		buildGallery: function() {
 			var self = this,
 				dom = this.dom;
-			
+
 			this.setDimensions();
 			this.setPositions();
-			
+
 			if(this.opts.show_filmstrip) {
 				this.buildFilmstrip();
 			}
 		},
-		
+
 		showInfoBar: function() {
 			if(!this.opts.show_infobar) { return; }
 			var self = this,
 				dom = this.dom;
-			
+
 			dom.gv_infobar.stop().stopTime('hideInfoBar_' + self.id).html((this.iterator+1) + ' of ' + this.numImages).show().css('opacity',this.opts.infobar_opacity);
-			
+
 			dom.gv_infobar.oneTime(2000 + this.opts.transition_speed,'hideInfoBar_' + self.id,function() {
 					dom.gv_infobar.fadeOut(1000);
 				});
 		},
-		
+
 		initImages: function() {
 			var self = this,
 				dom = this.dom;
@@ -474,12 +473,12 @@ if (typeof Object.create !== 'function') {
 						heightFactor = gv.innerHeight(parent) / height,
 						parentType = parent.hasClass('gv_panel') ? 'panel' : 'frame',
 						heightOffset = 0, widthOffset = 0;
-					
+
 					gvImage.scale[parentType] = self.opts[parentType+'_scale'] === 'fit' ? Math.min(widthFactor,heightFactor) : Math.max(widthFactor,heightFactor);
-					
+
 					widthOffset = Math.round((gv.innerWidth(parent) - (width * gvImage.scale[parentType])) / 2);
 					heightOffset = Math.round((gv.innerHeight(parent) - (height * gvImage.scale[parentType])) / 2);	
-					
+
 					_img.css({
 						width: width * gvImage.scale[parentType],
 						height: height * gvImage.scale[parentType],
@@ -488,7 +487,17 @@ if (typeof Object.create !== 'function') {
 					});
 					_img.hide().css('visibility','visible');
 					_img.remove().appendTo(parent);
-					
+					/*
+           * 添加绑定跳转事件
+           */
+					var bindClick = function (_img) {
+						if (gvImage.attrs.href) {
+							_img.click(function (e) {
+									window.open(gvImage.attrs.href, "_blank");
+							});
+							_img.css({ cursor: "pointer" });
+						}
+					}
 					if(parentType === 'frame') {
 						_img.fadeIn();
 						parent.parent().removeClass('gv_frame-loading');
@@ -497,13 +506,15 @@ if (typeof Object.create !== 'function') {
 						parent.prependTo(dom.gv_panelWrap);
 						parent.removeClass('gv_panel-loading');
 						_img.fadeIn();
+						bindClick(_img);
 						self.showInfoBar();
 					} else {
 						parent.removeClass('gv_panel-loading');
+						bindClick(_img);
 						_img.show();
 					}
 				});
-				
+
 				// store eventual image container as data property
 				// append to temporary storage element and set src
 				if(self.opts.show_panels) {
@@ -512,7 +523,7 @@ if (typeof Object.create !== 'function') {
 						.appendTo(dom.gv_imageStore)
 						.attr('src',gvImage.src.panel);
 				}
-				
+
 				if(self.opts.show_filmstrip) {
 					img.clone(true)
 						.data('parent',{type:'gv_thumbnails',index:i})
@@ -570,7 +581,14 @@ if (typeof Object.create !== 'function') {
 			}
 			
 			panel = dom.gv_panels.eq(i);
-			
+			panel.find("img").click(function () {
+			    if (self.gvImages[i].attrs.href) {
+			        $(this).click(function (e) {
+			            window.open(self.gvImages[i].attrs.href, "_blank");
+			        });
+			        $(this).css({ cursor: "pointer" });
+			    }
+			});
 			playing = this.playing;
 			
 			if(playing) {
